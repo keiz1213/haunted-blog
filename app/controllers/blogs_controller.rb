@@ -3,8 +3,8 @@
 class BlogsController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index show]
 
-  before_action :set_blog, only: %i[show edit update destroy]
   before_action :correct_user, only: %i[edit update destroy]
+  before_action :set_blog, only: %i[show edit update destroy]
   before_action :secret_blog, only: %i[show]
 
   def index
@@ -60,8 +60,7 @@ class BlogsController < ApplicationController
   end
 
   def correct_user
-    user = Blog.find(params[:id]).user
-    raise_error unless current_user == user
+    raise_error unless current_user == @blog.user
   end
 
   def secret_blog
