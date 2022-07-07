@@ -3,8 +3,8 @@
 class BlogsController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index show]
 
-  before_action :correct_user, only: %i[edit update destroy]
-  before_action :secret_blog, only: %i[show]
+  before_action :set_correct_blog, only: %i[edit update destroy]
+  before_action :secret_blog_filter, only: %i[show]
   before_action :set_blog, only: %i[show]
 
   def index
@@ -55,11 +55,11 @@ class BlogsController < ApplicationController
     params.require(:blog).permit(*attributes)
   end
 
-  def correct_user
+  def set_correct_blog
     @blog = current_user.blogs.find(params[:id])
   end
 
-  def secret_blog
+  def secret_blog_filter
     blog = Blog.find(params[:id])
     params[:id] = nil if blog.secret && !(user_signed_in? && blog.user == current_user)
   end
